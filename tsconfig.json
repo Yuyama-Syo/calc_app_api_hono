@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
-    "strict": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
+  "strict": true,
+  "jsx": "react-jsx",
+  "jsxImportSource": "hono/jsx",
+  "experimentalDecorators": true,
+  "emitDecoratorMetadata": true
   }
 }
