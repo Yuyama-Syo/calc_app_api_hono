@@ -12,20 +12,20 @@ export class ExpenseService {
     this.repo = repo ?? new ExpenseRepository();
   }
 
-  list(groupId: string): Expense[] {
-    return this.repo.findAllByGroupId(groupId);
+  async list(groupId: string): Promise<Expense[]> {
+    return await this.repo.findAllByGroupId(groupId);
   }
 
-  get(expenseId: string): Expense {
-    const expense = this.repo.findById(expenseId);
+  async get(expenseId: string): Promise<Expense> {
+    const expense = await this.repo.findById(expenseId);
     if (!expense) throw new DomainError("EXPENSE_NOT_FOUND", "支出が見つかりません");
     return expense;
   }
 
-  create(
+  async create(
     input: Omit<Expense, "createdAt" | "deleted"> &
       Partial<Pick<Expense, "createdAt" | "deleted">>
-  ): Expense {
+  ): Promise<Expense> {
     const parsed = expenseSchema.safeParse({
       ...input,
       createdAt: input.createdAt,
@@ -44,12 +44,12 @@ export class ExpenseService {
       );
     }
     splitExpense(expense.amount, expense.participants, "equal");
-    this.repo.create(expense);
+    await this.repo.create(expense);
     return expense;
   }
 
-  update(expenseId: string, update: Partial<Expense>): Expense {
-    const expense = this.repo.findById(expenseId);
+  async update(expenseId: string, update: Partial<Expense>): Promise<Expense> {
+    const expense = await this.repo.findById(expenseId);
     if (!expense) {
       throw new DomainError("EXPENSE_NOT_FOUND", "支出が見つかりません");
     }
@@ -68,13 +68,13 @@ export class ExpenseService {
       );
     }
     splitExpense(validated.amount, validated.participants, "equal");
-    this.repo.update(expenseId, validated);
+    await this.repo.update(expenseId, validated);
     return validated;
   }
 
-  delete(expenseId: string): boolean {
-    const expense = this.repo.findById(expenseId);
+  async delete(expenseId: string): Promise<boolean> {
+    const expense = await this.repo.findById(expenseId);
     if (!expense) throw new DomainError("EXPENSE_NOT_FOUND", "支出が見つかりません");
-    return this.repo.delete(expenseId);
+    return await this.repo.delete(expenseId);
   }
 }
